@@ -1,42 +1,42 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-vector<pair<int, int>> generate(int x, int y, int a, int b) {
-    vector<pair<int, int>> moves;
-    int dx[] = {a, a, -a, -a, b, b, -b, -b};
-    int dy[] = {b, -b, b, -b, a, -a, a, -a};
-    for (int i = 0; i < 8; i++) {
-        moves.emplace_back(x + dx[i], y + dy[i]);
-    }
-    return moves;
-}
+int dx[4] = {1, -1, 1, -1};
+int dy[4] = {1, -1, -1, 1};
 
-void solve() {
+int main() {
     int t;
     cin >> t;
     while (t--) {
-        int a, b;
+        long long a, b;
         cin >> a >> b;
-        int xk, yk, xq, yq;
-        cin >> xk >> yk >> xq >> yq;
+
+        long long x_king, y_king;
+        cin >> x_king >> y_king;
+
+        long long x_queen, y_queen;
+        cin >> x_queen >> y_queen;
+
+        // sets to store positions the king and queen can reach
+        set<pair<long long, long long>> king_hits, queen_hits;
+
+        // inserting 4 possible positions using (a, b) and (b, a)
+        for (int j = 0; j < 4; j++) {
+            king_hits.insert({x_king + dx[j] * a, y_king + dy[j] * b});
+            king_hits.insert({x_king + dx[j] * b, y_king + dy[j] * a});
+
+            queen_hits.insert({x_queen + dx[j] * a, y_queen + dy[j] * b});
+            queen_hits.insert({x_queen + dx[j] * b, y_queen + dy[j] * a});
+        }
+
         int ans = 0;
-        auto king_moves = generate(xk, yk, a, b);
-        for (auto [kx, ky] : king_moves) {
-            auto knight_moves = generate(kx, ky, a, b);
-            for (auto [nx, ny] : knight_moves) {
-                if (nx == xq && ny == yq) {
-                    ans++;
-                    break;
-                }
+        for (auto position : king_hits) {
+            if (queen_hits.find(position) != queen_hits.end()) {
+                ans++;
             }
         }
-        cout << ans << '\n';
-    }
-}
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    solve();
+        cout << ans << endl;
+    }
     return 0;
 }
